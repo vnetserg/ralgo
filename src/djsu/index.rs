@@ -1,7 +1,7 @@
 //! This module defines disjoint set union data structure
-//! that is indexed by natural numbers 0, 1, ..., N.
+//! that is indexed with natural numbers 0, 1, ..., N.
 
-/// The disjoint set union data structure indexed by natural numbers.
+/// The disjoint set union data structure indexed with natural numbers.
 ///
 /// # Examples 
 ///
@@ -9,10 +9,10 @@
 /// use ralgo::DjsuIndex;
 /// let mut djsu = DjsuIndex::new(5);
 /// djsu.union(0, 1);
-/// djsu.union(2, 3);
+/// djsu.union(1, 2);
 /// assert_eq!(djsu.n_components(), 3);
-/// assert!(djsu.connected(0, 1));
-/// assert!(!djsu.connected(1, 2));
+/// assert!(djsu.connected(0, 2));
+/// assert!(!djsu.connected(1, 3));
 /// ```
 pub struct DjsuIndex {
     root: Vec<usize>,
@@ -22,7 +22,7 @@ pub struct DjsuIndex {
 
 impl DjsuIndex {
 
-    /// Returns a DjsuIndex structure with given capacity.
+    /// Return a DjsuIndex structure with given capacity.
     ///
     /// # Arguments
     ///
@@ -34,12 +34,12 @@ impl DjsuIndex {
         DjsuIndex{ root, height, count }
     }
 
-    /// Returns the current number of connected components.
+    /// Return the current number of connected components.
     pub fn n_components(&self) -> usize {
         self.count
     }
 
-    /// Returns the representative of the connected components
+    /// Return the representative of the connected components
     /// that given element belongs to.
     ///
     /// # Arguments
@@ -59,7 +59,7 @@ impl DjsuIndex {
         root
     }
 
-    /// Returns `true` of two given elements belong to the same
+    /// Return `true` if two given elements belong to the same
     /// connected component, `false` otherwise.
     ///
     /// # Arguments
