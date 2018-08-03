@@ -1,3 +1,19 @@
+//! This module defines disjoint set union data structure
+//! that is indexed by natural numbers 0, 1, ..., N.
+
+/// The disjoint set union data structure indexed by natural numbers.
+///
+/// # Examples 
+///
+/// ```
+/// use ralgo::DjsuIndex;
+/// let mut djsu = DjsuIndex::new(5);
+/// djsu.union(0, 1);
+/// djsu.union(2, 3);
+/// assert_eq!(djsu.n_components(), 3);
+/// assert!(djsu.connected(0, 1));
+/// assert!(!djsu.connected(1, 2));
+/// ```
 pub struct DjsuIndex {
     root: Vec<usize>,
     height: Vec<usize>,
@@ -5,16 +21,31 @@ pub struct DjsuIndex {
 }
 
 impl DjsuIndex {
+
+    /// Returns a DjsuIndex structure with given capacity.
+    ///
+    /// # Arguments
+    ///
+    /// * `count` - the number of components to start with.
+    ///
     pub fn new(count: usize) -> DjsuIndex {
         let root = (0..count).collect();
         let height = vec![0; count];
         DjsuIndex{ root, height, count }
     }
 
+    /// Returns the current number of connected components.
     pub fn n_components(&self) -> usize {
         self.count
     }
 
+    /// Returns the representative of the connected components
+    /// that given element belongs to.
+    ///
+    /// # Arguments
+    ///
+    /// * `ind` - the element in question.
+    ///
     pub fn find(&mut self, mut ind: usize) -> usize {
         let mut root = ind;
         while self.root[root] != root {
@@ -28,10 +59,26 @@ impl DjsuIndex {
         root
     }
 
+    /// Returns `true` of two given elements belong to the same
+    /// connected component, `false` otherwise.
+    ///
+    /// # Arguments
+    ///
+    /// * `left` - the fist element in question;
+    /// * `right` - the second element.
+    ///
     pub fn connected(&mut self, left: usize, right: usize) -> bool {
         self.find(left) == self.find(right)
     }
 
+    /// Connect two components that two given elements belong to.
+    /// Return the representative of the merged component.
+    ///
+    /// # Arguments
+    ///
+    /// * `left` - the fist element;
+    /// * `right` - the second element.
+    ///
     pub fn union(&mut self, left: usize, right: usize) -> usize {
         let left = self.find(left);
         let right = self.find(right);
