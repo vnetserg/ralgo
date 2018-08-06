@@ -6,32 +6,32 @@
 /// # Examples 
 ///
 /// ```
-/// use ralgo::DjsuIndex;
-/// let mut djsu = DjsuIndex::new(5);
+/// use ralgo::DjsuIndexed;
+/// let mut djsu = DjsuIndexed::new(5);
 /// djsu.union(0, 1);
 /// djsu.union(1, 2);
 /// assert_eq!(djsu.n_components(), 3);
 /// assert!(djsu.connected(0, 2));
 /// assert!(!djsu.connected(1, 3));
 /// ```
-pub struct DjsuIndex {
+pub struct DjsuIndexed {
     root: Vec<usize>,
     height: Vec<usize>,
     count: usize
 }
 
-impl DjsuIndex {
+impl DjsuIndexed {
 
-    /// Return a DjsuIndex structure with given capacity.
+    /// Return a DjsuIndexed structure with given capacity.
     ///
     /// # Arguments
     ///
     /// * `count` - the number of components to start with.
     ///
-    pub fn new(count: usize) -> DjsuIndex {
+    pub fn new(count: usize) -> DjsuIndexed {
         let root = (0..count).collect();
         let height = vec![0; count];
-        DjsuIndex{ root, height, count }
+        DjsuIndexed{ root, height, count }
     }
 
     /// Return the current number of connected components.
@@ -39,7 +39,7 @@ impl DjsuIndex {
         self.count
     }
 
-    /// Return the representative of the connected components
+    /// Return the representative of the connected component
     /// that given element belongs to.
     ///
     /// # Arguments
@@ -76,7 +76,7 @@ impl DjsuIndex {
     ///
     /// # Arguments
     ///
-    /// * `left` - the fist element;
+    /// * `left` - the first element;
     /// * `right` - the second element.
     ///
     pub fn union(&mut self, left: usize, right: usize) -> usize {
@@ -107,7 +107,7 @@ impl DjsuIndex {
 mod tests {
     #[test]
     fn init_works() {
-        let mut djsu = ::DjsuIndex::new(25);
+        let mut djsu = ::DjsuIndexed::new(25);
         assert_eq!(djsu.n_components(), 25);
         for i in 0..25 {
             assert_eq!(djsu.find(i), i);
@@ -116,7 +116,7 @@ mod tests {
 
     #[test]
     fn union_works() {
-        let mut djsu = ::DjsuIndex::new(8);
+        let mut djsu = ::DjsuIndexed::new(8);
         djsu.union(0, 1);
         djsu.union(1, 2);
         djsu.union(2, 3);
