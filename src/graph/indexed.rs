@@ -1,10 +1,38 @@
+//! This module defines a graph data structure whose vertices
+//! are indexed with natural numbers 0, 1, ..., N.
 
+/// The integer-indexed graph data structure.
+///
+/// # Examples
+/// ```
+/// use ralgo::GraphIndexed;
+/// let graph = GraphIndexed::new(5, &[(0, 1), (2, 3)]);
+/// assert_eq!(graph.n_vert(), 5);
+/// assert_eq!(graph.n_edges(), 2);
+/// assert_eq!(graph.neighbors(0), &[1]);
+/// assert_eq!(graph.neighbors(1), &[0]);
+/// assert_eq!(graph.neighbors(2), &[3]);
+/// assert_eq!(graph.neighbors(3), &[2]);
+/// assert_eq!(graph.neighbors(4), &[]);
+/// ```
 pub struct GraphIndexed {
     offset: Vec<usize>,
     neigh: Vec<usize>
 }
 
 impl GraphIndexed {
+
+    /// Return a new instance of GraphIndex.
+    ///
+    /// # Arguments
+    ///
+    /// * `n_vert` - number of vertices;
+    /// * `edges` - pairs of adjacent vertices.
+    ///
+    /// # Panics
+    ///
+    /// If `edges` contains an element >= `n_vert`.
+    ///
     pub fn new(n_vert: usize, edges: &[(usize, usize)]) -> GraphIndexed {
         let mut offset = vec![0 as usize; n_vert];
         for &(u, v) in edges {
@@ -21,7 +49,6 @@ impl GraphIndexed {
 
         let mut pos = offset.clone();
         let mut neigh = vec![0; 2*edges.len()];
-        println!("{:?}", pos);
         for (u, v) in edges.iter() {
             neigh[pos[*u]] = *v;
             pos[*u] += 1;
@@ -32,16 +59,32 @@ impl GraphIndexed {
         GraphIndexed{ offset, neigh }
     }
 
+    /// Return the number of vertices in given Graph instance.
+    pub fn n_vert(&self) -> usize {
+        self.offset.len()
+    }
+
+    /// Return the number of edges in given Graph instance.
+    pub fn n_edges(&self) -> usize {
+        self.neigh.len() / 2
+    }
+
+    /// Return the slice of neighboring vertices to the given vertex.
+    ///
+    /// # Arguments
+    ///
+    /// * `vert` - the vertex in question.
+    ///
+    /// # Panics
+    ///
+    /// If `vert` >= `self.n_vert()`.
+    ///
     pub fn neighbors(&self, vert: usize) -> &[usize] {
         if vert < self.offset.len() - 1 {
             &self.neigh[self.offset[vert] .. self.offset[vert+1]]
         } else {
             &self.neigh[self.offset[vert] ..]
         }
-    }
-
-    pub fn n_vert(&self) -> usize {
-        self.offset.len()
     }
 }
 
@@ -65,6 +108,7 @@ mod tests {
             (3, 1),
         ]);
         assert_eq!(graph.n_vert(), 5);
+        assert_eq!(graph.n_edges(), 3);
         assert!(vertices_equal(graph.neighbors(0), &[1]));
         assert!(vertices_equal(graph.neighbors(1), &[0, 2, 3]));
         assert!(vertices_equal(graph.neighbors(2), &[1]));
@@ -76,6 +120,7 @@ mod tests {
     fn empty_graph_works() {
         let graph = ::GraphIndexed::new(5, &[]);
         assert_eq!(graph.n_vert(), 5);
+        assert_eq!(graph.n_edges(), 0);
     }
 
     #[test]
@@ -89,6 +134,7 @@ mod tests {
             (2, 3)
         ]);
         assert_eq!(graph.n_vert(), 4);
+        assert_eq!(graph.n_edges(), 6);
         assert!(vertices_equal(graph.neighbors(0), &[1, 2, 3]));
         assert!(vertices_equal(graph.neighbors(1), &[0, 2, 3]));
         assert!(vertices_equal(graph.neighbors(2), &[0, 1, 3]));
