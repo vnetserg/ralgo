@@ -117,6 +117,13 @@ impl DFS {
     pub fn n_vert_reached(&self) -> usize {
         self.n_vert_reached
     }
+
+    /// Consume the DFS instance, returning it's `parent` array.
+    /// In this array having `parent[node] = node` means that
+    /// `node` has no parent.
+    pub fn extract_parent(self) -> Vec<usize> {
+        self.parent
+    }
 }
 
 
