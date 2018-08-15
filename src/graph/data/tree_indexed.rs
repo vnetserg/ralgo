@@ -126,6 +126,39 @@ impl TreeIndexed {
             Some(self.parent[node])
         }
     }
+
+    /// Return sequence of vertices in pre-order.
+    pub fn preorder(&self) -> Vec<usize> {
+        let mut stack = vec![self.root()];
+        let mut result = vec![];
+        while !stack.is_empty() {
+            let vert = stack.pop().unwrap();
+            result.push(vert);
+            for &child in self.children(vert) {
+                stack.push(child);
+            }
+        }
+        result
+    }
+
+    /// Return sequence of vertices in post-order.
+    pub fn postorder(&self) -> Vec<usize> {
+        let mut stack = vec![self.root()];
+        let mut expanded = vec![false; self.n_vert()];
+        let mut result = vec![];
+        while !stack.is_empty() {
+            let &vert = stack.last().unwrap();
+            if expanded[vert] {
+                result.push(stack.pop().unwrap());
+            } else {
+                expanded[vert] = true;
+                for &child in self.children(vert) {
+                    stack.push(child);
+                }
+            }
+        }
+        result
+    }
 }
 
 

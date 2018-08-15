@@ -126,4 +126,13 @@ mod tests {
             assert!(!djsu.connected(i, 7));
         }
     }
+
+    #[test]
+    fn simple_test() {
+        let mut djsu = ::DjsuIndexed::new(5);
+        djsu.union(3, 4);
+        djsu.union(3, 2);
+        djsu.union(2, 0);
+        assert_eq!(djsu.find(3), 3);
+    }
 }
