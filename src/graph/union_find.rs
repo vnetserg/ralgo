@@ -107,9 +107,11 @@ impl UnionFind {
 
 #[cfg(test)]
 mod tests {
+    use super::UnionFind;
+
     #[test]
     fn init_works() {
-        let mut uf = ::UnionFind::new(25);
+        let mut uf = UnionFind::new(25);
         assert_eq!(uf.n_components(), 25);
         for i in 0..25 {
             assert_eq!(uf.find(i), i);
@@ -118,7 +120,7 @@ mod tests {
 
     #[test]
     fn union_works() {
-        let mut uf = ::UnionFind::new(8);
+        let mut uf = UnionFind::new(8);
         uf.union(0, 1);
         uf.union(1, 2);
         uf.union(2, 3);
@@ -143,6 +145,20 @@ mod tests {
         }
         for i in 0..7 {
             assert!(!uf.connected(i, 7));
+        }
+    }
+
+    #[test]
+    fn big_case_works() {
+        let mut uf = UnionFind::new(99999);
+        for i in (5..99999).step_by(3) {
+            uf.union(i, i-3);
+            uf.union(i-1, i-4);
+        }
+        for i in (2..99999).step_by(3) {
+            assert_eq!(uf.find(i), uf.find(2));
+            assert_eq!(uf.find(i-1), uf.find(1));
+            assert_eq!(uf.find(i-2), i-2);
         }
     }
 }
