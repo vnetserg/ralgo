@@ -1,12 +1,13 @@
-//! This module defines a graph data structure whose vertices
-//! are indexed with natural numbers 0, 1, ..., N.
+//! This module defines a static graph data structure whose vertices
+//! are indexed with integers 0, 1, ..., N-1. This graph can not
+//! be modified once created.
 
-/// The integer-indexed graph data structure.
+/// The integer-indexed static graph data structure.
 ///
 /// # Examples
 /// ```
-/// use ralgo::GraphIndexed;
-/// let graph = GraphIndexed::new(5, &[(0, 1), (2, 3)]);
+/// use ralgo::StaticGraph;
+/// let graph = StaticGraph::new(5, &[(0, 1), (2, 3)]);
 /// assert_eq!(graph.n_vert(), 5);
 /// assert_eq!(graph.n_edges(), 2);
 /// assert_eq!(graph.neighbors(0), &[1]);
@@ -15,14 +16,14 @@
 /// assert_eq!(graph.neighbors(3), &[2]);
 /// assert_eq!(graph.neighbors(4), &[]);
 /// ```
-pub struct GraphIndexed {
+pub struct StaticGraph {
     offset: Vec<usize>,
     neigh: Vec<usize>
 }
 
-impl GraphIndexed {
+impl StaticGraph {
 
-    /// Return a new instance of GraphIndex.
+    /// Return a new instance of StaticGraph.
     ///
     /// # Arguments
     ///
@@ -33,7 +34,7 @@ impl GraphIndexed {
     ///
     /// If `edges` contains an element >= `n_vert`.
     ///
-    pub fn new(n_vert: usize, edges: &[(usize, usize)]) -> GraphIndexed {
+    pub fn new(n_vert: usize, edges: &[(usize, usize)]) -> StaticGraph {
         let mut offset = vec![0 as usize; n_vert];
         for &(u, v) in edges {
             if u < n_vert - 1 {
@@ -56,7 +57,7 @@ impl GraphIndexed {
             pos[*v] += 1;
         }
 
-        GraphIndexed{ offset, neigh }
+        StaticGraph{ offset, neigh }
     }
 
     /// Return the number of vertices in given Graph instance.
@@ -102,7 +103,7 @@ mod tests {
 
     #[test]
     fn simple_graph_works() {
-        let graph = ::GraphIndexed::new(5, &[
+        let graph = ::StaticGraph::new(5, &[
             (0, 1),
             (2, 1),
             (3, 1),
@@ -118,14 +119,14 @@ mod tests {
 
     #[test]
     fn empty_graph_works() {
-        let graph = ::GraphIndexed::new(5, &[]);
+        let graph = ::StaticGraph::new(5, &[]);
         assert_eq!(graph.n_vert(), 5);
         assert_eq!(graph.n_edges(), 0);
     }
 
     #[test]
     fn full_graph_works() {
-        let graph = ::GraphIndexed::new(4, &[
+        let graph = ::StaticGraph::new(4, &[
             (0, 1),
             (0, 2),
             (0, 3),

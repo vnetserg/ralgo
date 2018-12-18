@@ -1,37 +1,39 @@
-//! This module defines disjoint set union data structure
-//! that is indexed with natural numbers 0, 1, ..., N.
+//! This module defines a union-find data structure
+//! (aka disjoint set union). The elements in the set
+//! are indexed with integers 0, 1, ..., N-1.
 
-/// The disjoint set union data structure indexed with natural numbers.
+/// The integer-indexed union-find data structure
+/// (aka disjoint set union).
 ///
 /// # Examples 
 ///
 /// ```
-/// use ralgo::DjsuIndexed;
-/// let mut djsu = DjsuIndexed::new(5);
-/// djsu.union(0, 1);
-/// djsu.union(1, 2);
-/// assert_eq!(djsu.n_components(), 3);
-/// assert!(djsu.connected(0, 2));
-/// assert!(!djsu.connected(1, 3));
+/// use ralgo::UnionFind;
+/// let mut uf = UnionFind::new(5);
+/// uf.union(0, 1);
+/// uf.union(1, 2);
+/// assert_eq!(uf.n_components(), 3);
+/// assert!(uf.connected(0, 2));
+/// assert!(!uf.connected(1, 3));
 /// ```
-pub struct DjsuIndexed {
+pub struct UnionFind {
     root: Vec<usize>,
     height: Vec<usize>,
     count: usize
 }
 
-impl DjsuIndexed {
+impl UnionFind {
 
-    /// Return a DjsuIndexed structure with given capacity.
+    /// Return a UnionFind structure with given capacity.
     ///
     /// # Arguments
     ///
     /// * `count` - the number of components to start with.
     ///
-    pub fn new(count: usize) -> DjsuIndexed {
+    pub fn new(count: usize) -> UnionFind {
         let root = (0..count).collect();
         let height = vec![0; count];
-        DjsuIndexed{ root, height, count }
+        UnionFind{ root, height, count }
     }
 
     /// Return the current number of connected components.
@@ -107,40 +109,40 @@ impl DjsuIndexed {
 mod tests {
     #[test]
     fn init_works() {
-        let mut djsu = ::DjsuIndexed::new(25);
-        assert_eq!(djsu.n_components(), 25);
+        let mut uf = ::UnionFind::new(25);
+        assert_eq!(uf.n_components(), 25);
         for i in 0..25 {
-            assert_eq!(djsu.find(i), i);
+            assert_eq!(uf.find(i), i);
         }
     }
 
     #[test]
     fn union_works() {
-        let mut djsu = ::DjsuIndexed::new(8);
-        djsu.union(0, 1);
-        djsu.union(1, 2);
-        djsu.union(2, 3);
-        djsu.union(4, 5);
-        djsu.union(5, 6);
+        let mut uf = ::UnionFind::new(8);
+        uf.union(0, 1);
+        uf.union(1, 2);
+        uf.union(2, 3);
+        uf.union(4, 5);
+        uf.union(5, 6);
 
-        assert_eq!(djsu.n_components(), 3);
+        assert_eq!(uf.n_components(), 3);
         for i in 0..4 {
             for k in 0..4 {
-                assert!(djsu.connected(i, k));
+                assert!(uf.connected(i, k));
             }
         }
         for i in 4..7 {
             for k in 4..7 {
-                assert!(djsu.connected(i, k));
+                assert!(uf.connected(i, k));
             }
         }
         for i in 0..4 {
             for k in 4..7 {
-                assert!(!djsu.connected(i, k));
+                assert!(!uf.connected(i, k));
             }
         }
         for i in 0..7 {
-            assert!(!djsu.connected(i, 7));
+            assert!(!uf.connected(i, 7));
         }
     }
 }
