@@ -1,5 +1,5 @@
-pub mod sort;
 pub mod graph;
+pub mod sort;
 
 pub use sort::mergesort;
 

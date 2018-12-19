@@ -32,7 +32,7 @@ pub fn mergesort<T: Ord + Copy>(array: &mut [T]) {
 
 fn merge_intervals<T: Ord + Copy>(input: &[T], output: &mut [T], step: usize) {
     let mut input_chunks = input.chunks(step);
-    let mut output_chunks = output.chunks_mut(2*step);
+    let mut output_chunks = output.chunks_mut(2 * step);
 
     loop {
         let first = match input_chunks.next() {
@@ -70,7 +70,7 @@ fn merge<T: Ord + Copy>(first: &[T], second: &[T], output: &mut [T]) {
 
 #[cfg(test)]
 mod tests {
-    use super::{mergesort, merge_intervals, merge};
+    use super::{merge, merge_intervals, mergesort};
 
     #[test]
     fn merge_works() {
@@ -116,8 +116,8 @@ mod tests {
         test_mergesort(vec![]);
         test_mergesort(vec![1]);
         test_mergesort(vec![1, 2]);
-        test_mergesort(vec![2, 1]); 
-        test_mergesort(vec![9, 3, 3, 3, 3]); 
+        test_mergesort(vec![2, 1]);
+        test_mergesort(vec![9, 3, 3, 3, 3]);
         test_mergesort(vec![5, 3, 7, 4, 2, 2, 2, 3]);
         test_mergesort(vec![9, 8, 7, 6, 5, 4, 3, 2, 1]);
     }

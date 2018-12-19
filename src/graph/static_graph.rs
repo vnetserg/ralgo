@@ -18,11 +18,10 @@
 /// ```
 pub struct StaticGraph {
     offset: Vec<usize>,
-    neigh: Vec<usize>
+    neigh: Vec<usize>,
 }
 
 impl StaticGraph {
-
     /// Return a new instance of StaticGraph.
     ///
     /// # Arguments
@@ -38,18 +37,18 @@ impl StaticGraph {
         let mut offset = vec![0 as usize; n_vert];
         for &(u, v) in edges {
             if u < n_vert - 1 {
-                offset[u+1] += 1;
+                offset[u + 1] += 1;
             }
             if v < n_vert - 1 {
-                offset[v+1] += 1;
+                offset[v + 1] += 1;
             }
         }
-        for i in 2 .. n_vert {
-            offset[i] += offset[i-1];
+        for i in 2..n_vert {
+            offset[i] += offset[i - 1];
         }
 
         let mut pos = offset.clone();
-        let mut neigh = vec![0; 2*edges.len()];
+        let mut neigh = vec![0; 2 * edges.len()];
         for (u, v) in edges.iter() {
             neigh[pos[*u]] = *v;
             pos[*u] += 1;
@@ -57,7 +56,7 @@ impl StaticGraph {
             pos[*v] += 1;
         }
 
-        StaticGraph{ offset, neigh }
+        StaticGraph { offset, neigh }
     }
 
     /// Return the number of vertices in given Graph instance.
@@ -82,13 +81,12 @@ impl StaticGraph {
     ///
     pub fn neighbors(&self, vert: usize) -> &[usize] {
         if vert < self.offset.len() - 1 {
-            &self.neigh[self.offset[vert] .. self.offset[vert+1]]
+            &self.neigh[self.offset[vert]..self.offset[vert + 1]]
         } else {
-            &self.neigh[self.offset[vert] ..]
+            &self.neigh[self.offset[vert]..]
         }
     }
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -103,11 +101,7 @@ mod tests {
 
     #[test]
     fn simple_graph_works() {
-        let graph = ::StaticGraph::new(5, &[
-            (0, 1),
-            (2, 1),
-            (3, 1),
-        ]);
+        let graph = ::StaticGraph::new(5, &[(0, 1), (2, 1), (3, 1)]);
         assert_eq!(graph.n_vert(), 5);
         assert_eq!(graph.n_edges(), 3);
         assert!(vertices_equal(graph.neighbors(0), &[1]));
@@ -126,14 +120,7 @@ mod tests {
 
     #[test]
     fn full_graph_works() {
-        let graph = ::StaticGraph::new(4, &[
-            (0, 1),
-            (0, 2),
-            (0, 3),
-            (1, 2),
-            (1, 3),
-            (2, 3)
-        ]);
+        let graph = ::StaticGraph::new(4, &[(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)]);
         assert_eq!(graph.n_vert(), 4);
         assert_eq!(graph.n_edges(), 6);
         assert!(vertices_equal(graph.neighbors(0), &[1, 2, 3]));

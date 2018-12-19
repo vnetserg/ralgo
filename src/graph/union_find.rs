@@ -5,7 +5,7 @@
 /// The integer-indexed union-find data structure
 /// (aka disjoint set union).
 ///
-/// # Examples 
+/// # Examples
 ///
 /// ```
 /// use ralgo::UnionFind;
@@ -19,11 +19,10 @@
 pub struct UnionFind {
     root: Vec<usize>,
     height: Vec<usize>,
-    count: usize
+    count: usize,
 }
 
 impl UnionFind {
-
     /// Return a UnionFind structure with given capacity.
     ///
     /// # Arguments
@@ -33,7 +32,11 @@ impl UnionFind {
     pub fn new(count: usize) -> UnionFind {
         let root = (0..count).collect();
         let height = vec![0; count];
-        UnionFind{ root, height, count }
+        UnionFind {
+            root,
+            height,
+            count,
+        }
     }
 
     /// Return the current number of connected components.
@@ -95,15 +98,13 @@ impl UnionFind {
         } else if self.height[left] > self.height[right] {
             self.root[right] = left;
             return left;
-        }
-        else {
+        } else {
             self.root[right] = left;
             self.height[right] += 1;
             return left;
         }
     }
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -152,13 +153,13 @@ mod tests {
     fn big_case_works() {
         let mut uf = UnionFind::new(99999);
         for i in (5..99999).step_by(3) {
-            uf.union(i, i-3);
-            uf.union(i-1, i-4);
+            uf.union(i, i - 3);
+            uf.union(i - 1, i - 4);
         }
         for i in (2..99999).step_by(3) {
             assert_eq!(uf.find(i), uf.find(2));
-            assert_eq!(uf.find(i-1), uf.find(1));
-            assert_eq!(uf.find(i-2), i-2);
+            assert_eq!(uf.find(i - 1), uf.find(1));
+            assert_eq!(uf.find(i - 2), i - 2);
         }
     }
 }
