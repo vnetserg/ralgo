@@ -1,9 +1,9 @@
-//! This module contains implementation of
+//! This module contains the bottom-up implementation of
 //! the well-known mergesort algorithm.
 
 use std::cmp::{Ord, Ordering};
 
-/// Mergesort implementation.
+/// The bottom-up mergesort implementation.
 /// Since mergesort uses additional memory,
 /// it requires elements to also be `Copy`.
 pub fn mergesort<T: Ord + Copy>(array: &mut [T]) {
@@ -49,21 +49,23 @@ fn merge_intervals<T: Ord + Copy>(input: &[T], output: &mut [T], step: usize) {
 }
 
 fn merge<T: Ord + Copy>(first: &[T], second: &[T], output: &mut [T]) {
-    let mut i = 0;
-    let mut k = 0;
-    for v in output.iter_mut() {
-        if i >= first.len() {
-            *v = second[k];
-            k += 1;
-        } else if k >= second.len() {
-            *v = first[i];
-            i += 1;
-        } else if first[i].cmp(&second[k]) == Ordering::Less {
-            *v = first[i];
-            i += 1;
+    let mut first_iter = first.iter();
+    let mut second_iter = second.iter();
+    let mut left = first_iter.next();
+    let mut right = second_iter.next();
+    for result in output.iter_mut() {
+        if left.is_none() {
+            *result = *right.unwrap();
+            right = second_iter.next();
+        } else if right.is_none() {
+            *result = *left.unwrap();
+            left = first_iter.next();
+        } else if left.unwrap().cmp(right.unwrap()) == Ordering::Less {
+            *result = *left.unwrap();
+            left = first_iter.next();
         } else {
-            *v = second[k];
-            k += 1;
+            *result = *right.unwrap();
+            right = second_iter.next();
         }
     }
 }
