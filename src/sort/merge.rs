@@ -1,7 +1,7 @@
 //! This module contains implementation of
 //! the well-known mergesort algorithm.
 
-use std::cmp::Ord;
+use std::cmp::{Ord, Ordering};
 
 /// Mergesort implementation.
 /// Since mergesort uses additional memory,
@@ -11,7 +11,8 @@ pub fn mergesort<T: Ord + Copy>(array: &mut [T]) {
         return;
     }
 
-    let mut aux: Vec<T> = array.iter().map(|&x| x).collect();
+    // Copy `array` into vector
+    let mut aux: Vec<T> = array.iter().map(|x| *x).collect();
 
     let mut primary = &mut *array;
     let mut secondary = &mut aux[..];
@@ -48,18 +49,76 @@ fn merge_intervals<T: Ord + Copy>(input: &[T], output: &mut [T], step: usize) {
 }
 
 fn merge<T: Ord + Copy>(first: &[T], second: &[T], output: &mut [T]) {
-    let mut first_iter = first.iter();
-    let mut second_iter = second.iter();
+    let mut i = 0;
+    let mut k = 0;
     for v in output.iter_mut() {
-        if let Some(first_value) = first_iter.next() {
-            if let Some(second_value) = second_iter.next() {
-                *v = std::cmp::min(*first_value, *second_value);
-            } else {
-                *v = *first_value;
-            }
+        if i >= first.len() {
+            *v = second[k];
+            k += 1;
+        } else if k >= second.len() {
+            *v = first[i];
+            i += 1;
+        } else if first[i].cmp(&second[k]) == Ordering::Less {
+            *v = first[i];
+            i += 1;
         } else {
-            *v = *second_iter.next().unwrap();
+            *v = second[k];
+            k += 1;
         }
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use super::{mergesort, merge_intervals, merge};
+
+    #[test]
+    fn merge_works() {
+        fn test_merge(first: Vec<i32>, second: Vec<i32>, expected: Vec<i32>) {
+            let mut merged = vec![0; expected.len()];
+            merge(&first, &second, &mut merged);
+            assert_eq!(merged, expected);
+        }
+
+        test_merge(vec![1], vec![2], vec![1, 2]);
+        test_merge(vec![1, 3, 5], vec![2, 4, 6], vec![1, 2, 3, 4, 5, 6]);
+        test_merge(vec![1], vec![2, 4, 6], vec![1, 2, 4, 6]);
+        test_merge(vec![7], vec![2, 4, 6], vec![2, 4, 6, 7]);
+        test_merge(vec![1, 3, 5], vec![0], vec![0, 1, 3, 5]);
+        test_merge(vec![1, 3, 5], vec![8], vec![1, 3, 5, 8]);
+    }
+
+    #[test]
+    fn merge_intervals_works() {
+        fn test_merge_intervals(input: Vec<i32>, step: usize, expected: Vec<i32>) {
+            let mut output = vec![0; expected.len()];
+            merge_intervals(&input, &mut output, step);
+            assert_eq!(output, expected);
+        }
+
+        test_merge_intervals(vec![1, 2], 1, vec![1, 2]);
+        test_merge_intervals(vec![2, 1], 1, vec![1, 2]);
+        test_merge_intervals(vec![1, 3, 2, 4], 2, vec![1, 2, 3, 4]);
+        test_merge_intervals(vec![1, 4, 2, 3], 2, vec![1, 2, 3, 4]);
+        test_merge_intervals(vec![3, 4, 1, 2], 2, vec![1, 2, 3, 4]);
+        test_merge_intervals(vec![4, 3, 2, 1], 1, vec![3, 4, 1, 2]);
+    }
+
+    #[test]
+    fn mergesort_works() {
+        fn test_mergesort(mut input: Vec<i32>) {
+            let mut copy = input.clone();
+            copy.sort();
+            mergesort(&mut input);
+            assert_eq!(input, copy);
+        }
+
+        test_mergesort(vec![]);
+        test_mergesort(vec![1]);
+        test_mergesort(vec![1, 2]);
+        test_mergesort(vec![2, 1]); 
+        test_mergesort(vec![9, 3, 3, 3, 3]); 
+        test_mergesort(vec![5, 3, 7, 4, 2, 2, 2, 3]);
+        test_mergesort(vec![9, 8, 7, 6, 5, 4, 3, 2, 1]);
+    }
+}
